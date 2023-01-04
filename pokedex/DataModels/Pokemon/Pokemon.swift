@@ -87,11 +87,17 @@ class TypeRelations {
     var halfDamageFrom: [PKType] = []
     var doubleDamageFrom: [PKType] = []
     
+    init() { }
+    
     init(from typeRelations: PKMTypeRelations) {
+        print("init type relations")
+        Task {
+            self.noDamageTo = try! await typeRelations.noDamageTo?.asyncMap { value in
+                return try await PokemonAPI().resourceService.fetch(value)
+            }.compactMap { PKType(from: $0)} ?? []
+        }
         
     }
-    
-    init() { }
 }
 
 class GenerationGameIndex {
@@ -165,9 +171,14 @@ class PKType {
         
         self.id = id
         self.name = name
-        self.damageRelations = TypeRelations(from: damageRelations)
+        self.damageRelations = TypeRelations()
         self.generation = Generation()
         self.moveDamageClass = ""
+//        if let gen = try? await PokemonAPI().resourceService.fetch(generation) {
+//
+//        }
+//
+        
         
         PokemonAPI().resourceService.fetch(generation) { [weak self] result in
             if let result = try? result.get(),

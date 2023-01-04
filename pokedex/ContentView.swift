@@ -44,7 +44,7 @@ struct ContentView: View {
                 }
                 
                 NavigationLink {
-                    TypesRootView()
+                    TypesRootView(viewModel: TypesRootViewModel())
                 } label: {
                     Text("Types")
                 }
